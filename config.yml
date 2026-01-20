@@ -30,12 +30,14 @@ network:
   proxy_free:
     avsox: 'https://avsox.click'
     javbus: 'https://www.seedmm.help'
-    javdb: 'https://javdb368.com'
+    javdb: 'https://javdb.com'
     javlib: 'https://www.y78k.com'
   # 网络问题导致抓取数据失败时的重试次数，通常3次就差不多了
   retry: 3
   # https://en.wikipedia.org/wiki/ISO_8601#Durations
   timeout: PT10S
+  # 浏览器F12，网络链接里面复制cookies明文贴在这里
+  javdb_cookie_str: "locale=zh; _ym_uid=000; over18=1; list_mode=h; theme=auto; _ym_d=000; _ym_isad=1; _rucaptcha_session_id=000; redirect_to=xxx; remember_me_token=xxx; cf_clearance=xxx; _jdb_session=xxx"
 
 ################################
 crawler:
@@ -47,6 +49,7 @@ crawler:
     cid: [fanza]
     getchu: [dl_getchu]
     gyutto: [gyutto]
+
   # 爬虫至少要获取到哪些字段才可以视为抓取成功？
   required_keys: [cover, title]
   # 努力爬取更准确更丰富的信息（会略微增加部分站点的爬取耗时）

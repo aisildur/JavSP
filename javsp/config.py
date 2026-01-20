@@ -1,6 +1,6 @@
 from argparse import ArgumentParser, RawTextHelpFormatter
 from enum import Enum
-from typing import Dict, List, Literal, TypeAlias, Union
+from typing import Dict, List, Literal, TypeAlias, Union, Optional  
 from confz import BaseConfig, CLArgSource, EnvSource, FileSource
 from pydantic import ByteSize, Field, NonNegativeInt, PositiveInt
 from pydantic_extra_types.pendulum_dt import Duration
@@ -44,6 +44,7 @@ class Network(BaseConfig):
     retry: NonNegativeInt = 3
     timeout: Duration
     proxy_free: Dict[CrawlerID, Url]
+    javdb_cookie_str: Optional[str] = Field(default=None, description="JavDB的Cookie明文")
 
 class CrawlerSelect(BaseConfig):
     def items(self) -> List[tuple[str, list[CrawlerID]]]:

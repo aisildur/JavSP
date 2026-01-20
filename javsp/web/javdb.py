@@ -34,14 +34,39 @@ def get_html_wrapper(url):
         if r.history and '/login' in r.url:
             # 仅在需要时去读取Cookies
             if 'cookies_pool' not in globals():
+            #     try:
+            #         cookies_pool = get_browsers_cookies()
+            #     except (PermissionError, OSError) as e:
+            #         logger.warning(f"无法从浏览器Cookies文件获取JavDB的登录凭据({e})，可能是安全软件在保护浏览器Cookies文件", exc_info=True)
+            #         cookies_pool = []
+            #     except Exception as e:
+            #         logger.warning(f"获取JavDB的登录凭据时出错({e})，你可能使用的是国内定制版等非官方Chrome系浏览器", exc_info=True)
+            #         cookies_pool = []
                 try:
-                    cookies_pool = get_browsers_cookies()
-                except (PermissionError, OSError) as e:
-                    logger.warning(f"无法从浏览器Cookies文件获取JavDB的登录凭据({e})，可能是安全软件在保护浏览器Cookies文件", exc_info=True)
+                    # 从配置文件读取Cookie明文
+                    cookie_str = Cfg().network.javdb_cookie_str
                     cookies_pool = []
+                    if cookie_str and cookie_str.strip():
+                        # 将Cookie明文转换为request可使用的字典格式
+                        cookies = {}
+                        for item in cookie_str.strip().split(';'):
+                            if '=' in item:
+                                key, value = item.strip().split('=', 1)
+                                cookies[key] = value
+                        # 保持原有cookies_pool的结构（兼容后续逻辑）
+                        cookies_pool.append({
+                            'cookies': cookies,
+                            'profile': 'config_file',
+                            'site': 'javdb.com'
+                        })
+                        logger.debug("已从配置文件加载JavDB Cookie")
+                    else:
+                        logger.warning("配置文件中未填写javdb_cookie_str，Cookie池为空")
+                        cookies_pool = []
                 except Exception as e:
-                    logger.warning(f"获取JavDB的登录凭据时出错({e})，你可能使用的是国内定制版等非官方Chrome系浏览器", exc_info=True)
+                    logger.warning(f"从配置文件加载JavDB Cookie失败: {e}", exc_info=True)
                     cookies_pool = []
+            #后续原始逻辑            
             if len(cookies_pool) > 0:
                 item = cookies_pool.pop()
                 # 更换Cookies时需要创建新的request实例，否则cloudscraper会保留它内部第一次发起网络访问时获得的Cookies
